@@ -10,15 +10,16 @@ fn main() {
         io::stdin().read_line(&mut input).expect("Failed to read input");
         let args : Vec<&str> = input.split_whitespace().collect();
 
-        println!("Args are: {:?}", args);
+        // println!("Args are: {:?}", args);
 
-        execute_commands(args[0]);
+        execute_commands(args);
     }
     // println!("Hello, world!");
 }
 
-fn execute_commands(cmd: &str){
-    let mut cmd = Command::new(cmd);
+fn execute_commands(args: Vec<&str>){
+    let mut cmd = Command::new(args[0]);
+    cmd.args(&args[1..]);
 
     let child_proc = cmd.spawn().expect("Failed to spawn the command");
 
