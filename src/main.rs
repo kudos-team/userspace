@@ -18,14 +18,30 @@ fn main() {
 }
 
 fn execute_commands(args: Vec<&str>){
+    if args.is_empty() { return; }
+
     let mut cmd = Command::new(args[0]);
     cmd.args(&args[1..]);
 
-    let child_proc = cmd.spawn().expect("Failed to spawn the command");
+    // let child_proc = cmd.spawn();
+    match cmd.spawn() {
+        Ok(child_proc) => {
 
-    let output = child_proc.wait_with_output().expect("Failed to wait for this command");
+            match child_proc.wait_with_output(){
+                Ok(output) => {
+                    let stdout_str = String::from_utf8_lossy(&output.stdout);
+                    print!("{}", stdout_str);
+                }
 
-    let stdout_str = String::from_utf8_lossy(&output.stdout);
+                Err(e) => {
+                    eprintln!("kudOS: error waiting for command: {}", e);
+                }
+            }
 
-    print!("{}", stdout_str);
+        }
+        Err(_) => {
+            eprint!("kudOS: command not found: {}\n", args[0]);
+        }
+    }
+
 }
